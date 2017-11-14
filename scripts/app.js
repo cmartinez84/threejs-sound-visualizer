@@ -35,7 +35,7 @@ var example = (function(){
         );
 
         camera.position.z= 100;
-        camera.position.y= 1;
+        camera.position.y= 100;
         //_____________Orbit Controls______________________
 
         controls = new THREE.OrbitControls( camera);
