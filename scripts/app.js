@@ -10,7 +10,11 @@ var example = (function(){
     directionalLight,
     box,
     box2,
-    boxes = [];
+    boxes = [],
+    audioCtx;
+
+    ///from audioloader.js
+    audioCtx = createAudioContext();
 
     function initScene(){
 
@@ -35,10 +39,6 @@ var example = (function(){
         //_____________Orbit Controls______________________
 
         controls = new THREE.OrbitControls( camera);
-				// controls.addEventListener( 'change', render ); // remove when using animation loop
-				// enable animation loop when using damping or autorotation
-				//controls.enableDamping = true;
-				//controls.dampingFactor = 0.25;
 				controls.enableZoom = true;
         //_____________Directional light______________________
 
@@ -54,7 +54,7 @@ var example = (function(){
         scene.add( directionalLight );
         //_____________Box 1______________________
 
-        
+
 
 
         //_____________Create Multiple Boxes______________________
@@ -64,27 +64,34 @@ var example = (function(){
           var randomB = Math.floor(Math.random() * 230);
           var boxWidth = 10 + i*10;
           var newBox = new THREE.Mesh(
-          new THREE.BoxGeometry(boxWidth, 1 ,boxWidth),
+          new THREE.BoxGeometry(boxWidth, 10 ,boxWidth),
           new THREE.MeshPhongMaterial({
             // color: 'rgb(20, 23, 230)',
             color: `rgba(${randomR},${randomG}, ${randomB})`,
           })
           );
-          newBox.position.y = -i;
+          newBox.position.y = -i*10;
 
           newBox.name="box" + i;
           boxes.push(newBox);
           scene.add(newBox);
         }
-
-
         render();
+    }
 
+
+    function scaleBoxes(){
+      audioCtx.analyser.getByteFrequencyData(audioCtx.frequencyData);
+      boxes.forEach((box, i)=>{
+        box.scale.x = audioCtx.frequencyData[30-i]/100;
+        box.scale.z = audioCtx.frequencyData[30-i]/100;
+      })
     }
 
     function render() {
         renderer.render(scene, camera);
         requestAnimationFrame(render);
+        scaleBoxes();
         controls.update();
     };
 
